@@ -94,7 +94,7 @@ Parameters:
     Type: Number
     MinValue: '10'
     MaxValue: '1000'
-    Default: '10'
+    Default: '50'
   VolumeType:
     Description: The EBS Data volume Type
     Type: String
