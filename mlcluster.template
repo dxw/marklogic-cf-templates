@@ -32,6 +32,8 @@ Metadata:
           - PrivateSubnet1
           - PrivateSubnet2
           - PrivateSubnet3
+          - ExternalAccessCidrIP
+          - ECSSecurityGroup
       - Label:
           default: "MarkLogic Configuration"
         Parameters:
@@ -90,6 +92,10 @@ Metadata:
         default: Private Subnet 2
       PrivateSubnet3:
         default: Private Subnet 3
+      ExternalAccessCidrIP:
+        default: External IP address range for access to admin site
+      ECSSecurityGroup:
+        default: the security group the ecs cluster is in
 Parameters:
   # resource configuration
   IAMRole:
@@ -100,7 +106,7 @@ Parameters:
     Type: Number
     MinValue: '10'
     MaxValue: '1000'
-    Default: '10'
+    Default: '50'
   VolumeType:
     Description: The EBS Data volume Type
     Type: String
@@ -108,7 +114,7 @@ Parameters:
       - standard
       - gp2
       - gp3
-    Default: gp2
+    Default: gp3
   VolumeIOPS:
     Description: The number of I/O operations per second for a gp3 volume. This parameter is only applicable for a gp3 volume
     Type: Number
@@ -739,7 +745,7 @@ Parameters:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
     Type: String
   NumberOfZones:
-    Description: Total number of Availability Zones, which can be 1 or 3. Select 3 zones for Application Load Balancer. Once the stack has been created, the number of Availability Zones cannot be changed.
+    Description: Total number of Availability Zones, which can be 1 or 3. Load balancer type depends on the number of zones selected. Select 3 zones for Application Load Balancer (OR) Select 1 zone for Classic Load Balancer.
     Type: Number
     AllowedValues:
       - 1
@@ -780,6 +786,14 @@ Parameters:
   PrivateSubnet3:
     Description: The private subnet 3 in the VPC. This subnet must reside within the third selected Availability Zone (AZ). You must provide values for all three private subnets. If you only select one AZ, the second and third subnets will be ignored.
     Type: 'AWS::EC2::Subnet::Id'
+  ExternalAccessCidrIP:
+    Description: A CIDR IP range to allow external access from
+    Type: String
+    Default: 54.76.254.148/32
+  ECSSecurityGroup:
+    Description: the security group the ECS cluster is in
+    Type: 'AWS::EC2::SecurityGroup::Id'
+
   # marklogic configuration
   AdminUser:
     Description: The MarkLogic administrator username
@@ -792,11 +806,11 @@ Parameters:
       ^(?!.*[*]).*$
     ConstraintDescription: Admin password must contain any characters except asterisk (*).
   Licensee:
-    Description: The MarkLogic Licensee or 'none'. Provide none/none to choose PAYG version. Provide valid Licensee/Licensekey to choose BYOL version.
+    Description: The MarkLogic Licensee or 'none'. Provide none/none to choose "Pay as you Go"/Enterprise version. Provide valid Licensee/Licensekey to choose BYOL/developer version.
     Type: String
     Default: none
   LicenseKey:
-    Description: The MarkLogic License Key or 'none'. Provide none/none to choose PAYG version. Provide valid Licensee/Licensekey to choose BYOL version.
+    Description: The MarkLogic License Key or 'none'. Provide none/none to choose "Pay as you Go"/Enterprise version. Provide valid Licensee/Licensekey to choose BYOL/developer version.
     Type: String
     Default: none
 Conditions:
@@ -1030,6 +1044,8 @@ Resources:
       - AlbTargetGroup7      
       - AlbTargetGroup8
       - AlbTargetGroup9
+      - MarklogicExternal8011
+      - MarklogicInternal8011
     Properties:
       VPCZoneIdentifier:
         - !Ref PrivateSubnet1
@@ -1074,6 +1090,8 @@ Resources:
         - !Ref AlbTargetGroup7
         - !Ref AlbTargetGroup8
         - !Ref AlbTargetGroup9
+        - !Ref MarklogicExternal8011
+        - !Ref MarklogicInternal8011
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 31621dd0-4b18-4dcd-b443-db9cef64ebb1
@@ -1094,6 +1112,8 @@ Resources:
       - AlbTargetGroup7      
       - AlbTargetGroup8
       - AlbTargetGroup9
+      - MarklogicExternal8011
+      - MarklogicInternal8011
     Properties:
       VPCZoneIdentifier:
         - !Ref PrivateSubnet2
@@ -1138,6 +1158,8 @@ Resources:
         - !Ref AlbTargetGroup7
         - !Ref AlbTargetGroup8
         - !Ref AlbTargetGroup9
+        - !Ref MarklogicExternal8011
+        - !Ref MarklogicInternal8011
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 87d75478-787a-41d5-bb21-9de6fe4b662e
@@ -1158,6 +1180,8 @@ Resources:
       - AlbTargetGroup7      
       - AlbTargetGroup8
       - AlbTargetGroup9
+      - MarklogicExternal8011
+      - MarklogicInternal8011
     Properties:
       VPCZoneIdentifier:
         - !Ref PrivateSubnet3
@@ -1202,35 +1226,48 @@ Resources:
         - !Ref AlbTargetGroup7
         - !Ref AlbTargetGroup8
         - !Ref AlbTargetGroup9
+        - !Ref MarklogicExternal8011
+        - !Ref MarklogicInternal8011
     Metadata:
       'AWS::CloudFormation::Designer':
         id: bbd8314a-6e59-4102-9ed5-232739dd0dfa
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Enable SSH access and HTTP access on the inbound port
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
           FromPort: '7998'
           ToPort: '7998'
-          CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId: !Ref ElbSecurityGroup
         - IpProtocol: tcp
           FromPort: '8000'
-          ToPort: '8010'
-          CidrIp: 0.0.0.0/0
+          ToPort: '8011'
+          SourceSecurityGroupId: !Ref ElbSecurityGroup
         - IpProtocol: tcp
           FromPort: '7997'
           ToPort: '7997'
-          CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId: !Ref ElbSecurityGroup
         - IpProtocol: tcp
           FromPort: '7999'
           ToPort: '7999'
-          CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId: !Ref ElbSecurityGroup
+        - IpProtocol: tcp
+          FromPort: '7998'
+          ToPort: '7998'
+          SourceSecurityGroupId: !Ref InternalElbSecurityGroup
+        - IpProtocol: tcp
+          FromPort: '8000'
+          ToPort: '8011'
+          SourceSecurityGroupId: !Ref InternalElbSecurityGroup
+        - IpProtocol: tcp
+          FromPort: '7997'
+          ToPort: '7997'
+          SourceSecurityGroupId: !Ref InternalElbSecurityGroup
+        - IpProtocol: tcp
+          FromPort: '7999'
+          ToPort: '7999'
+          SourceSecurityGroupId: !Ref InternalElbSecurityGroup
   InstanceSecurityGroupIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     DependsOn:
@@ -1241,6 +1278,24 @@ Resources:
       ToPort: '65355'
       GroupId: !Ref InstanceSecurityGroup
       SourceSecurityGroupId: !Ref InstanceSecurityGroup
+  InternalElbSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Allow access from ECS clsuter to internal ALB for marklogic cluster.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '7998'
+          ToPort: '7998'
+          SourceSecurityGroupId: !Ref ECSSecurityGroup
+        - IpProtocol: tcp
+          FromPort: '8000'
+          ToPort: '8011'
+          SourceSecurityGroupId: !Ref ECSSecurityGroup
+        - IpProtocol: tcp
+          FromPort: '7997'
+          ToPort: '7997'
+          SourceSecurityGroupId: !Ref ECSSecurityGroup
   ElbSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -1250,19 +1305,19 @@ Resources:
         - IpProtocol: tcp
           FromPort: '22'
           ToPort: '22'
-          CidrIp: 0.0.0.0/0
+          CidrIp: !Ref ExternalAccessCidrIP
         - IpProtocol: tcp
           FromPort: '7998'
           ToPort: '7998'
-          CidrIp: 0.0.0.0/0
+          CidrIp: !Ref ExternalAccessCidrIP
         - IpProtocol: tcp
           FromPort: '8000'
-          ToPort: '8010'
-          CidrIp: 0.0.0.0/0
+          ToPort: '8011'
+          CidrIp: !Ref ExternalAccessCidrIP
         - IpProtocol: tcp
           FromPort: '7997'
           ToPort: '7997'
-          CidrIp: 0.0.0.0/0
+          CidrIp: !Ref ExternalAccessCidrIP
   LaunchTemp1:
     Type: 'AWS::EC2::LaunchTemplate'
     DependsOn:
@@ -1757,6 +1812,27 @@ Resources:
         - Key: deregistration_delay.timeout_seconds
           Value: 60
       VpcId: !Ref VPC
+  MarklogicExternal8011:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8011
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
   #Descriptions of the 9 Listeners for MultiZone deployments (3 zones). Each Listener connects Application Load Balancer to a TargetGroup with a particular port.
   AlbListener1:
     Condition: MultiZone
@@ -1874,6 +1950,72 @@ Resources:
           Type: forward
       LoadBalancerArn: !Ref Alb
       Port: 8008
+      Protocol: HTTP
+  MarklogicExternal8011Listener:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - Alb
+      - MarklogicExternal8011
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref MarklogicExternal8011
+          Type: forward
+      LoadBalancerArn: !Ref Alb
+      Port: 8011
+      Protocol: HTTP
+ #Application Load Balancer description for MultiZone deployments (3 zones).
+  InternalAlb:
+    Condition: MultiZone
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    DependsOn:
+      - InternalElbSecurityGroup
+    Properties: 
+      Scheme: internal
+      SecurityGroups: 
+        - !Ref InternalElbSecurityGroup
+      Subnets:
+        - !Ref PrivateSubnet1
+        - !If [MultiZone, !Ref PrivateSubnet2, !Ref 'AWS::NoValue']
+        - !If [MultiZone, !Ref PrivateSubnet3, !Ref 'AWS::NoValue']
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e188e71e-5f01-4816-896e-9bd30b9a96c1
+  #Descriptions of the 1 TargetGroups for MultiZone deployments (3 zones). TargetGroups route requests to registered targets.
+  #Health checks are performed on each TargetGroup.
+  MarklogicInternal8011:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8011
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  MarklogicInternal8011Listener:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - MarklogicInternal8011
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref MarklogicInternal8011
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8011
       Protocol: HTTP
 Outputs:
   URL:
