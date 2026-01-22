@@ -2017,6 +2017,123 @@ Resources:
       LoadBalancerArn: !Ref InternalAlb
       Port: 8011
       Protocol: HTTP
+  InternalAlbListener1:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup1
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup1
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8000
+      Protocol: HTTP
+  InternalAlbListener2:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup2
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup2
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8001
+      Protocol: HTTP
+  InternalAlbListener3:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup3
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup3
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8002
+      Protocol: HTTP
+  InternalAlbListener4:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup4
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup4
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8003
+      Protocol: HTTP
+  InternalAlbListener5:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup5
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup5
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8004
+      Protocol: HTTP
+  InternalAlbListener6:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup6
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup6
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8005
+      Protocol: HTTP
+  InternalAlbListener7:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup7
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup7
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8006
+      Protocol: HTTP
+  InternalAlbListener8:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup8
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup8
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8007
+      Protocol: HTTP
+  InternalAlbListener9:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DependsOn:
+      - InternalAlb
+      - AlbTargetGroup9
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref AlbTargetGroup9
+          Type: forward
+      LoadBalancerArn: !Ref InternalAlb
+      Port: 8008
+      Protocol: HTTP
 Outputs:
   URL:
     Description: The URL of the MarkLogic Cluster
