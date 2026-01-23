@@ -32,6 +32,8 @@ Metadata:
           - PrivateSubnet1
           - PrivateSubnet2
           - PrivateSubnet3
+          - PublicLoadBalancer
+          - InternalLoadBalancer
           - ExternalAccessCidrIP
           - ECSSecurityGroup
       - Label:
@@ -92,6 +94,10 @@ Metadata:
         default: Private Subnet 2
       PrivateSubnet3:
         default: Private Subnet 3
+      PublicLoadBalancer:
+        default: Public Load Balancer
+      InternalLoadBalancer:
+        default: Internal Load Balancer
       ExternalAccessCidrIP:
         default: External IP address range for access to admin site
       ECSSecurityGroup:
@@ -764,6 +770,20 @@ Parameters:
     Description: SNS Topic for logging - optional/advanced.
     Type: String
     Default: none
+  PublicLoadBalancer:
+    Description: Enable Public Load Balancer
+    Type: String
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+  InternalLoadBalancer:
+    Description: Enable Internal Load Balancer
+    Type: String
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
   # network configuration
   VPC:
     Description: ID of an existing Virtual Private Cloud (VPC)
@@ -822,6 +842,8 @@ Conditions:
   #MultiZone (3 zones) and SingleZone conditions used for the conditional resource creation based on number of zones selected.
   MultiZone:
     !Not [!Equals [!Ref NumberOfZones, 1]]
+  CreatePublicAlb: !And [!Condition MultiZone, !Equals [!Ref PublicLoadBalancer, 'true']]
+  CreateInternalAlb: !And [!Condition MultiZone, !Equals [!Ref InternalLoadBalancer, 'true']]
   SingleZone: !Equals [!Ref NumberOfZones, 1]
   PAYG:
     !Or [ !And [!Equals [!Ref LicenseKey, ''], !Equals [!Ref Licensee, '']], !And [!Equals [!Ref LicenseKey, 'none'], !Equals [!Ref Licensee, 'none']] ]
@@ -1607,7 +1629,7 @@ Resources:
         id: 7fa68c90-39bc-4874-ad20-8cd8c974ed52
   #Application Load Balancer description for MultiZone deployments (3 zones).
   Alb:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     DependsOn:
       - ElbSecurityGroup
@@ -1835,7 +1857,7 @@ Resources:
       VpcId: !Ref VPC
   #Descriptions of the 9 Listeners for MultiZone deployments (3 zones). Each Listener connects Application Load Balancer to a TargetGroup with a particular port.
   AlbListener1:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1848,7 +1870,7 @@ Resources:
       Port: 8000
       Protocol: HTTP
   AlbListener2:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1861,7 +1883,7 @@ Resources:
       Port: 8001
       Protocol: HTTP
   AlbListener3:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1874,7 +1896,7 @@ Resources:
       Port: 8002
       Protocol: HTTP
   AlbListener4:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1887,7 +1909,7 @@ Resources:
       Port: 8003
       Protocol: HTTP
   AlbListener5:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1900,7 +1922,7 @@ Resources:
       Port: 8004
       Protocol: HTTP
   AlbListener6:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1913,7 +1935,7 @@ Resources:
       Port: 8005
       Protocol: HTTP
   AlbListener7:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1926,7 +1948,7 @@ Resources:
       Port: 8006
       Protocol: HTTP
   AlbListener8:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1939,7 +1961,7 @@ Resources:
       Port: 8007
       Protocol: HTTP
   AlbListener9:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1952,7 +1974,7 @@ Resources:
       Port: 8008
       Protocol: HTTP
   MarklogicExternal8011Listener:
-    Condition: MultiZone
+    Condition: CreatePublicAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - Alb
@@ -1966,7 +1988,7 @@ Resources:
       Protocol: HTTP
  #Application Load Balancer description for MultiZone deployments (3 zones).
   InternalAlb:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     DependsOn:
       - InternalElbSecurityGroup
@@ -2005,7 +2027,7 @@ Resources:
           Value: 60
       VpcId: !Ref VPC
   MarklogicInternal8011Listener:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2018,7 +2040,7 @@ Resources:
       Port: 8011
       Protocol: HTTP
   InternalAlbListener1:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2031,7 +2053,7 @@ Resources:
       Port: 8000
       Protocol: HTTP
   InternalAlbListener2:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2044,7 +2066,7 @@ Resources:
       Port: 8001
       Protocol: HTTP
   InternalAlbListener3:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2057,7 +2079,7 @@ Resources:
       Port: 8002
       Protocol: HTTP
   InternalAlbListener4:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2070,7 +2092,7 @@ Resources:
       Port: 8003
       Protocol: HTTP
   InternalAlbListener5:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2083,7 +2105,7 @@ Resources:
       Port: 8004
       Protocol: HTTP
   InternalAlbListener6:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2096,7 +2118,7 @@ Resources:
       Port: 8005
       Protocol: HTTP
   InternalAlbListener7:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2109,7 +2131,7 @@ Resources:
       Port: 8006
       Protocol: HTTP
   InternalAlbListener8:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2122,7 +2144,7 @@ Resources:
       Port: 8007
       Protocol: HTTP
   InternalAlbListener9:
-    Condition: MultiZone
+    Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
@@ -2140,5 +2162,5 @@ Outputs:
     Value: !Join
       - ''
       - - 'http://'
-        - !If [MultiZone, !GetAtt [Alb, DNSName], !GetAtt [ManagedEniStack, Outputs.ENI]]
+        - !If [CreatePublicAlb, !GetAtt [Alb, DNSName], !If [CreateInternalAlb, !GetAtt [InternalAlb, DNSName], !GetAtt [ManagedEniStack, Outputs.ENI]]]
         - ':8001'
