@@ -1066,6 +1066,15 @@ Resources:
       - AlbTargetGroup7      
       - AlbTargetGroup8
       - AlbTargetGroup9
+      - InternalAlbTargetGroup1
+      - InternalAlbTargetGroup2
+      - InternalAlbTargetGroup3
+      - InternalAlbTargetGroup4
+      - InternalAlbTargetGroup5
+      - InternalAlbTargetGroup6
+      - InternalAlbTargetGroup7
+      - InternalAlbTargetGroup8
+      - InternalAlbTargetGroup9
       - MarklogicExternal8011
       - MarklogicInternal8011
     Properties:
@@ -1112,6 +1121,15 @@ Resources:
         - !Ref AlbTargetGroup7
         - !Ref AlbTargetGroup8
         - !Ref AlbTargetGroup9
+        - !Ref InternalAlbTargetGroup1
+        - !Ref InternalAlbTargetGroup2
+        - !Ref InternalAlbTargetGroup3
+        - !Ref InternalAlbTargetGroup4
+        - !Ref InternalAlbTargetGroup5
+        - !Ref InternalAlbTargetGroup6
+        - !Ref InternalAlbTargetGroup7
+        - !Ref InternalAlbTargetGroup8
+        - !Ref InternalAlbTargetGroup9
         - !Ref MarklogicExternal8011
         - !Ref MarklogicInternal8011
     Metadata:
@@ -1134,6 +1152,15 @@ Resources:
       - AlbTargetGroup7      
       - AlbTargetGroup8
       - AlbTargetGroup9
+      - InternalAlbTargetGroup1
+      - InternalAlbTargetGroup2
+      - InternalAlbTargetGroup3
+      - InternalAlbTargetGroup4
+      - InternalAlbTargetGroup5
+      - InternalAlbTargetGroup6
+      - InternalAlbTargetGroup7
+      - InternalAlbTargetGroup8
+      - InternalAlbTargetGroup9
       - MarklogicExternal8011
       - MarklogicInternal8011
     Properties:
@@ -1180,6 +1207,15 @@ Resources:
         - !Ref AlbTargetGroup7
         - !Ref AlbTargetGroup8
         - !Ref AlbTargetGroup9
+        - !Ref InternalAlbTargetGroup1
+        - !Ref InternalAlbTargetGroup2
+        - !Ref InternalAlbTargetGroup3
+        - !Ref InternalAlbTargetGroup4
+        - !Ref InternalAlbTargetGroup5
+        - !Ref InternalAlbTargetGroup6
+        - !Ref InternalAlbTargetGroup7
+        - !Ref InternalAlbTargetGroup8
+        - !Ref InternalAlbTargetGroup9
         - !Ref MarklogicExternal8011
         - !Ref MarklogicInternal8011
     Metadata:
@@ -1202,6 +1238,15 @@ Resources:
       - AlbTargetGroup7      
       - AlbTargetGroup8
       - AlbTargetGroup9
+      - InternalAlbTargetGroup1
+      - InternalAlbTargetGroup2
+      - InternalAlbTargetGroup3
+      - InternalAlbTargetGroup4
+      - InternalAlbTargetGroup5
+      - InternalAlbTargetGroup6
+      - InternalAlbTargetGroup7
+      - InternalAlbTargetGroup8
+      - InternalAlbTargetGroup9
       - MarklogicExternal8011
       - MarklogicInternal8011
     Properties:
@@ -1248,6 +1293,15 @@ Resources:
         - !Ref AlbTargetGroup7
         - !Ref AlbTargetGroup8
         - !Ref AlbTargetGroup9
+        - !Ref InternalAlbTargetGroup1
+        - !Ref InternalAlbTargetGroup2
+        - !Ref InternalAlbTargetGroup3
+        - !Ref InternalAlbTargetGroup4
+        - !Ref InternalAlbTargetGroup5
+        - !Ref InternalAlbTargetGroup6
+        - !Ref InternalAlbTargetGroup7
+        - !Ref InternalAlbTargetGroup8
+        - !Ref InternalAlbTargetGroup9
         - !Ref MarklogicExternal8011
         - !Ref MarklogicInternal8011
     Metadata:
@@ -2027,6 +2081,195 @@ Resources:
         - Key: deregistration_delay.timeout_seconds
           Value: 60
       VpcId: !Ref VPC
+  InternalAlbTargetGroup1:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8000
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  InternalAlbTargetGroup2:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8001
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  InternalAlbTargetGroup3:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8002
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  InternalAlbTargetGroup4:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8003
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  InternalAlbTargetGroup5:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8004
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  InternalAlbTargetGroup6:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8005
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  InternalAlbTargetGroup7:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8006
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  InternalAlbTargetGroup8:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8007
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
+  InternalAlbTargetGroup9:
+    Condition: MultiZone
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      HealthCheckPort: 7997
+      UnhealthyThresholdCount: 5
+      Port: 8008
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: true
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: 3600
+        - Key: deregistration_delay.timeout_seconds
+          Value: 60
+      VpcId: !Ref VPC
   MarklogicInternal8011Listener:
     Condition: CreateInternalAlb
     Type: "AWS::ElasticLoadBalancingV2::Listener"
@@ -2045,10 +2288,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup1
+      - InternalAlbTargetGroup1
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup1
+        - TargetGroupArn: !Ref InternalAlbTargetGroup1
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8000
@@ -2058,10 +2301,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup2
+      - InternalAlbTargetGroup2
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup2
+        - TargetGroupArn: !Ref InternalAlbTargetGroup2
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8001
@@ -2071,10 +2314,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup3
+      - InternalAlbTargetGroup3
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup3
+        - TargetGroupArn: !Ref InternalAlbTargetGroup3
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8002
@@ -2084,10 +2327,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup4
+      - InternalAlbTargetGroup4
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup4
+        - TargetGroupArn: !Ref InternalAlbTargetGroup4
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8003
@@ -2097,10 +2340,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup5
+      - InternalAlbTargetGroup5
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup5
+        - TargetGroupArn: !Ref InternalAlbTargetGroup5
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8004
@@ -2110,10 +2353,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup6
+      - InternalAlbTargetGroup6
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup6
+        - TargetGroupArn: !Ref InternalAlbTargetGroup6
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8005
@@ -2123,10 +2366,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup7
+      - InternalAlbTargetGroup7
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup7
+        - TargetGroupArn: !Ref InternalAlbTargetGroup7
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8006
@@ -2136,10 +2379,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup8
+      - InternalAlbTargetGroup8
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup8
+        - TargetGroupArn: !Ref InternalAlbTargetGroup8
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8007
@@ -2149,10 +2392,10 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     DependsOn:
       - InternalAlb
-      - AlbTargetGroup9
+      - InternalAlbTargetGroup9
     Properties:
       DefaultActions:
-        - TargetGroupArn: !Ref AlbTargetGroup9
+        - TargetGroupArn: !Ref InternalAlbTargetGroup9
           Type: forward
       LoadBalancerArn: !Ref InternalAlb
       Port: 8008
