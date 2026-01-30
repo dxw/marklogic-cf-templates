@@ -1256,6 +1256,7 @@ Resources:
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
+      GroupDescription: Enable access to MarkLogic instances from Load Balancers and other cluster members
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
